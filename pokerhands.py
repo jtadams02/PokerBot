@@ -48,22 +48,25 @@ def evaluate_hand(cards):
     high_card=True #False if anything but a high card remains
         
     for card in cards:
-
+        # Appends the cards value to values
+        # Appends the card's suit to suits?
         values.append(card.value)
         suits.append(card.suit)
 
     #keep raw data on values
 
     for v in values:
+        # Okay? This is just copying everything in v to raw_values
         raw_values.append(v)
     
 
     #perform histogram on values and suits
-
+    # Count the occurences of each indivudal value in both values and suites
     value_count=Counter(values)
     suit_count=Counter(suits)
 
     #put values in order of rank
+    # Highest go first
     values.sort(reverse=True)
     
     #set up variables
@@ -82,7 +85,8 @@ def evaluate_hand(cards):
     if limit>5:
     	 limit=5
         
-    straight=is_straight(values, limit)
+    straight=is_straight(values, limit) # Check if the values form a straight
+    # Store in straight
     
     #iterate through values
     
@@ -209,4 +213,3 @@ def evaluate_hand(cards):
         
 
         
-

@@ -6,7 +6,7 @@ created 'position' variable.
 __author__='philip'
 
 import random
-import pokerhands
+import pokerhandsGPT as pokerhands
 from operator import attrgetter
 import time
 import pokerstrat
@@ -811,13 +811,13 @@ BLINDS=[10,20]
 table=Table()
 
 player1=Hand('Philip', table, 'SklanskySys2')
-player2=Hand('Igor', table, 'SklanskySys2')
-player3=Hand('Carol', table, 'SklanskySys2')
-player4=Hand('Johnboy', table, 'SklanskySys2')
-player5=Hand('Rob', table, 'SklanskySys2')
-player6=Hand('Alex', table, 'SklanskySys2')
-player7=Hand('Wynona', table, 'SklanskySys2')
-player8=Hand('Timur', table, 'SklanskySys2')
+player2=Hand('Igor', table, 'Test')
+# player3=Hand('Carol', table, 'SklanskySys2')
+# player4=Hand('Johnboy', table, 'SklanskySys2')
+# player5=Hand('Rob', table, 'SklanskySys2')
+# player6=Hand('Alex', table, 'SklanskySys2')
+# player7=Hand('Wynona', table, 'SklanskySys2')
+# player8=Hand('Timur', table, 'SklanskySys2')
 
 deck=Deck()
 
@@ -922,6 +922,3 @@ for player in table.players:
 
 
    
-
-
-
