@@ -204,9 +204,9 @@ class Human(Strategy):
 
 
         if player.to_play==0:
-                op=0
+                op=0 # Can check
         elif player.to_play<player.stack:
-                op=1
+                op=1 # Call
         else: op=2
 
         
@@ -240,61 +240,132 @@ class Human(Strategy):
         
                                 
 class Test(Strategy):
-    options=[['x', 'f', 'b'], ['c', 'r', 'f'], ['c', 'f']]
-    choices={0:'check, fold or bet', 1:'call, raise, fold', 2:'call all-in or fold'}
-    personal_cards = [] # Define the 2 cards the player gets to start the game
-    first_hand = 0 # This will serve as a flag to let the class know whether or not to update personal_cards
-    def decide_play(self, player, pot):
-        # So What do we do here!
-        # Rep = Contains the details of your current hand! ie: Pair of sevens
-        # Raw Data = 
-        rep, hand_value, tie_break, raw_data = player.get_value()
-        # Testing out what each thing here is
-        # The SklanskySys2 only utilizes rep and raw_data, so lets see what that is
-        print(f"Rep: {rep}")
-        print(f"Hand value: {hand_value}")
-        print(f"Raw Data: {raw_data}")
-        options=Test.options
-        choices=Test.choices
-        action=''
-        op=0
+        options=[['x', 'f', 'b'], ['c', 'r', 'f'], ['c', 'f']]
+        choices={0:'check, fold or bet', 1:'call, raise, fold', 2:'call all-in or fold'}
+
+        table_info = [] # This will hold information ertaining to the table. Previous pot, etc.
+
+        def decide_play(self, player, pot):
+                # So What do we do here!
+                # Rep = Represents hand rank, not sure if useful!
+                # Hand value = Text representation of thing
+                # Raw Data =
+                rep, hand_value, tie_break, raw_data = player.get_value()
+                # Testing out what each thing here is
+                # The SklanskySys2 only utilizes rep and raw_data, so lets see what that is
+                print(f"Rep: {rep}")
+                print(f"Hand value: {hand_value}")
+                print(f"Raw Data: {raw_data}")
+                useable_cards = raw_data[0] # Grabs the useable card values
+                # Determine length of hand, what our hand has, and go from there
+                if len(useable_cards) == 2:
+                        # if we're in the starting hand, determine what we can do
+                        can_check = 1
+                        if player.to_play != 0:
+                                can_check = 0
+                        decision = self.first_hand(player, raw_data, can_check, pot)
+                        # Use decision to make first move
+                        if decision[0] == 0:
+                                player.check_call(pot)
+                        elif decision[0] == 1:
+                                player.bet(pot,decision[1])
+                        else:
+                                player.fold(pot)
+                else:
+                        options=Test.options
+                        choices=Test.choices
+                        action=''
+                        op=0
 
 
-        if player.to_play==0:
-                op=0
-        elif player.to_play<player.stack:
-                op=1
-        else: op=2
+                        if player.to_play==0:
+                                op=0
+                        elif player.to_play<player.stack:
+                                op=1
+                        else: op=2
 
-        
+                        
 
-        while action not in options[op]:
-                try:
-                        action=input(str(choices[op]))
-                except NameError:
-                 print ('enter a valid choice')
+                        while action not in options[op]:
+                                try:
+                                        action=input(str(choices[op]))
+                                except NameError:
+                                        print ('enter a valid choice')
 
-    
-        if action=='x':
-                player.check_call(pot)
-        elif action=='f':
-                player.fold(pot)
-        elif action=='c':
-                player.check_call(pot)
-        elif action=='b' or action=='r':
-                stake=0
-                max_bet=player.stack
-                print ('max '+str(max_bet))
-                while stake not in range (10,(max_bet+1), 5):
-                        try:
-                                stake=int(input('stake..'))
-                        except:
-                                print ('input a stake')
-                print ('stake '+str(stake))                                
-                player.bet(pot, stake)
 
-            
-            
+                        if action=='x':
+                                player.check_call(pot)
+                        elif action=='f':
+                                player.fold(pot)
+                        elif action=='c':
+                                player.check_call(pot)
+                        elif action=='b' or action=='r':
+                                stake=0
+                                max_bet=player.stack
+                                print ('max '+str(max_bet))
+                                while stake not in range (10,(max_bet+1), 5):
+                                        try:
+                                                stake=int(input('stake..'))
+                                        except:
+                                                print ('input a stake')
+                                print ('stake '+str(stake))                                
+                                player.bet(pot, stake)
+
+        # TODO: Figure out what these will do
+        def first_hand(self, player, raw_data, can_check, pot):
+                percentage = 0
+                # Break up the raw_data
+                hand = raw_data[0] # This is all we need
+
+                # For the starting hand, all we really wanna determine
+                # is whether or not there is a pair
+                is_pair = 0
+                if hand[0] == hand[1]:
+                        is_pair = 1
+                
+                # If we have a pocket pair we instantly want to bet, not too much though
+                if is_pair:
+                        # Idk why spacing is so weird
+                        if hand[0] >= 10:
+                                percentage += 0.05
+                        elif hand[0] < 10 and hand[0] >=7:
+                                percentage += 0.025
+                if percentage > 0:
+                        # We want to bet
+                        bet_amount = self.to_bet(player,percentage)
+                        if can_check:
+                                return [1,bet_amount]
+                        else:
+                                needed_bet = player.to_play
+                                if needed_bet < bet_amount:
+                                        # Raise
+                                        return [1,bet_amount]
+                                elif needed_bet - bet_amount > 300:
+                                        # Fold
+                                        return [-1,0]
+                                else:
+                                        # Call
+                                        return [0,0]
+                else:
+                        # try to check
+                        if can_check:
+                                return [0,0]
+                        else:
+                                # If we cant check we need to compare our hand against
+                                # Whatever the current bet is
+                                if (hand[0] > 7 or hand[1] > 7) and player.to_play < player.stack * 0.2:
+                                        # Call
+                                        return [0,0]
+                                else:
+                                        # Fold
+                                        return [-1,0]
+
+
+
+        # Return numeric amount to bet
+        def to_bet(self, player, percentage):
+                return player.stack * percentage
+                
             
             
 		
