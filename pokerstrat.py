@@ -249,6 +249,7 @@ class JTAdams(Strategy):
         previous_pots = [] # This will hold information ertaining to the table. Previous pot, etc.
         RANKS=['2','3','4','5','6','7','8','9','10','J', 'Q', 'K', 'A']
         SUITS=['h', 'c', 's', 'd']
+        VALS = {1:'2', 2:'3', 3:'4', 4:'5', 5:'6', 6:'7', 7:'8', 8:'9', 9:'10', 10:'J', 11:'Q', 12:'K', 13: 'A'}
         def decide_play(self, player, pot):
 
                 # So, what we are going to do is evaluate the score of my hand
@@ -257,8 +258,7 @@ class JTAdams(Strategy):
                 score, hand_str, tie_break, raw_data = player.get_value()
                 print(f"Jt has {hand_str}")
                 print(f"Jt needs to play {player.to_play}")
-                print(f"He has {player.stack}")
-                # Now we need to generate a ton of random hands
+                print(f"He has {player.stack}")                # Now we need to generate a ton of random hands
                 table_cards = []
                 for card in player.total_cards:
                         if card not in player.cards:
@@ -268,16 +268,18 @@ class JTAdams(Strategy):
                 table_suits = []
 
                 for card in table_cards:
-                      table_values.append(card.value)
-                      table_cards.append(card.suit)
+                      table_values.append(self.VALS[card.value])
+                      table_suits.append(card.suit)
                 
                 wins = 0
                 losses = 0
-                for i in range(10000):
+                for i in range(50000):
                         hand = self.gen_hand(table_values,table_suits)
-                        print(hand)
                         # print(hand)
-                        hand_score = self.score(table_values+hand[0],table_suits+hand[1])
+                        full_vals = table_values + hand[0]
+                        full_suits = table_suits + hand[1]
+
+                        hand_score = self.score(full_vals,full_suits)
                         if hand_score > score:
                                 losses += 1
                         else:
@@ -291,7 +293,7 @@ class JTAdams(Strategy):
                 if win_percentage > 0.5:
                         # TODO: Bet something
                         to_bet = round(player.stack * 0.2)
-                        if to_bet < player.to_play:
+                        if to_bet < player.to_play or to_bet < 1:
                                 player.check_call(pot)
                         else:
                               player.bet(pot,to_bet)
@@ -320,10 +322,12 @@ class JTAdams(Strategy):
                 
         
         # This will generate a score for the given hand
-        def score(self,values,suits):
+        def score(self,v,suits):
                 score = 0
                 values = []
-                suits = []
+
+                for val in v:
+                      values.append(self.RANKS.index(val)+1)
                 raw_values = []
                 
                 raw_values = values[:]
@@ -410,9 +414,9 @@ class JTAdams(Strategy):
                         score = 400 + straight # + straight
                 elif flush:
                         flush = []
-                        for card in hand:
-                                if key in card.suit:
-                                        flush.append(card.value)
+                        # This is casuing errors
+                        for val in values:
+                              flush.append(val)
                         flush.sort(reverse=True)
                         rep = 'Flush, ' + self.cn(flush[0]) + ' high'
                         score = 500 + int(flush[0])
