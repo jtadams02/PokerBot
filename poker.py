@@ -812,11 +812,11 @@ BLINDS=[10,20]
 table=Table()
 
 player1=Hand('Philip', table, 'Random')
-player2=Hand('JT', table, 'JTAdams')
-player3=Hand('Nick', table, 'nickwarren')
-player4=Hand('JT2', table, 'JTAdams')
-player5=Hand('Rob', table, 'Random')
-player6=Hand('Alex', table, 'SklanskySys2')
+player2=Hand('Alex', table, 'Random')
+player3=Hand('JT', table, 'JTAdams')
+player4=Hand('Nick', table, 'nickwarren')
+player5=Hand('JT2', table, 'JTAdams')
+player6=Hand('Rob', table, 'Random')
 player7=Hand('Wynona', table, 'SklanskySys2')
 player8=Hand('Timur', table, 'SklanskySys2')
 
