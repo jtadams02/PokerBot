@@ -557,6 +557,7 @@ def ante_up(pot):
         deck.deal_to(player, 2)
         if player.stratname=='Human':
             player.flip()
+            player.flip()
         player.print_cards()
         pot.already_bet=True
 
@@ -810,14 +811,14 @@ BLINDS=[10,20]
 
 table=Table()
 
-player1=Hand('Philip', table, 'SklanskySys2')
-player2=Hand('Igor', table, 'Test')
-# player3=Hand('Carol', table, 'SklanskySys2')
-# player4=Hand('Johnboy', table, 'SklanskySys2')
-# player5=Hand('Rob', table, 'SklanskySys2')
-# player6=Hand('Alex', table, 'SklanskySys2')
-# player7=Hand('Wynona', table, 'SklanskySys2')
-# player8=Hand('Timur', table, 'SklanskySys2')
+player1=Hand('Philip', table, 'Random')
+player2=Hand('JT', table, 'JTAdams')
+player3=Hand('Carol', table, 'Random')
+player4=Hand('Johnboy', table, 'Random')
+player5=Hand('Rob', table, 'Random')
+player6=Hand('Alex', table, 'SklanskySys2')
+player7=Hand('Wynona', table, 'SklanskySys2')
+player8=Hand('Timur', table, 'SklanskySys2')
 
 deck=Deck()
 
