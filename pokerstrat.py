@@ -256,9 +256,9 @@ class JTAdams(Strategy):
                 # Then generate, lets say 1000 random other hands, and eval their score
                 # Then, if my hand is better than a certain percentage
                 score, hand_str, tie_break, raw_data = player.get_value()
-                print(f"Jt has {hand_str}")
-                print(f"Jt needs to play {player.to_play}")
-                print(f"He has {player.stack}")                # Now we need to generate a ton of random hands
+                # print(f"Jt has {hand_str}")
+                # print(f"Jt needs to play {player.to_play}")
+                # print(f"He has {player.stack}")                # Now we need to generate a ton of random hands
                 table_cards = []
                 for card in player.total_cards:
                         if card not in player.cards:
